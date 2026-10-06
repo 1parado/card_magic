@@ -115,6 +115,9 @@ const show = (() => {
     if (!ok()) return;
 
     const rest = deck.splice(27);
+    if (deck.length !== 27) {
+      console.error(`[magic] 牌堆数据异常：期望 27 张，实际 ${deck.length} 张`);
+    }
     await animator.sendAway(rest);             // 其余牌退出舞台
     if (!ok()) return;
 

@@ -44,7 +44,6 @@
   filter: blur(4px);
   transition: transform 0.32s cubic-bezier(.3,.6,.3,1), opacity 0.32s ease;
   pointer-events: none;
-  will-change: transform, opacity;
 }
 
 /* ---------- 挑牌模式：牌可悬停，悬停的牌上浮放大（效果在 .card-inner，
@@ -73,7 +72,9 @@
   margin: calc(var(--card-h) / -2) 0 0 calc(var(--card-w) / -2);
   transform-style: preserve-3d;
   pointer-events: none;
-  will-change: transform;
+  /* 注意：不设 will-change——52 牌 + 52 影子常驻合成层会超出
+     移动端合成层预算，导致排队的 WAAPI 动画被静默丢弃（发牌缺张）。
+     WAAPI 动画期间浏览器会自行按需提升。 */
 }
 
 /* ---------- 翻面层 ---------- */

@@ -77,16 +77,25 @@ const animator = (() => {
     st.shadowEl.style.opacity = Math.max(0.1, 0.55 - lift * 0.0022).toFixed(3);
   }
 
-  /* WAAPI Promise 化；结束后把终态写入 style（fill 不残留） */
+  /* WAAPI Promise 化；结束后把终态写入 style（fill 不残留）。
+     兜底：部分移动设备（合成层预算溢出）会静默丢弃排队靠后的动画，
+     finish 事件不触发 → 超时后直接落终态，保证牌数与位置永远正确。 */
   function animateEl(el, frames, { dur = 300, delay = 0, ease } = {}) {
     return new Promise((resolve) => {
+      let settled = false;
       const a = el.animate(frames, { duration: D(dur), delay: D(delay), easing: ease, fill: 'both' });
-      a.addEventListener('finish', () => {
+      const total = D(dur) + D(delay) + 600;
+      const timer = setTimeout(finish, total);
+      function finish() {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
         const last = frames[frames.length - 1];
         if (last.transform) el.style.transform = last.transform;
-        a.cancel();
+        try { a.cancel(); } catch (e) { /* 动画可能已被移除 */ }
         resolve();
-      });
+      }
+      a.addEventListener('finish', finish);
     });
   }
 
@@ -125,7 +134,8 @@ const animator = (() => {
     return done;
   }
 
-  /* 翻面：绕牌面中央垂直轴 rotateY（合理的翻牌旋转轴），结束后同步状态 */
+  /* 翻面：绕牌面中央垂直轴 rotateY（合理的翻牌旋转轴），结束后同步状态。
+     同样带超时兜底（移动端丢动画防护）。 */
   function flipCard(card, down, { dur = 360, delay = 0 } = {}) {
     const st = cardMap.get(card.id);
     if (st.down === down) return sleep(0);
@@ -133,13 +143,23 @@ const animator = (() => {
     const from = down ? 'rotateY(0deg)' : 'rotateY(180deg)';
     const to = down ? 'rotateY(180deg)' : 'rotateY(0deg)';
     return new Promise((resolve) => {
+      let settled = false;
       const a = st.inner.animate([{ transform: from }, { transform: to }],
         { duration: D(dur), delay: D(delay), easing: 'cubic-bezier(.45,.1,.25,1)', fill: 'both' });
-      a.addEventListener('finish', () => {
+      const timer = setTimeout(finish, D(dur) + D(delay) + 600);
+      function finish() {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        // 静态 class 切换时禁用 transition，避免与 peek 悬停过渡叠加出二次翻动
+        st.inner.style.transition = 'none';
         st.inner.classList.toggle('down', down);
-        a.cancel();
+        void st.inner.offsetWidth;
+        st.inner.style.transition = '';
+        try { a.cancel(); } catch (e) { /* 动画可能已被移除 */ }
         resolve();
-      });
+      }
+      a.addEventListener('finish', finish);
     });
   }
 
