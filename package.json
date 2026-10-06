@@ -1,0 +1,10 @@
+{
+  "name": "card-magic-show",
+  "version": "1.0.0",
+  "private": true,
+  "description": "3D 纸牌魔术秀 —— 纯前端零依赖，双击 index.html 即玩",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node test/tricks.test.cjs"
+  }
+}

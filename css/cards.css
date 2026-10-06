@@ -1,0 +1,194 @@
+/* ============================================================
+ * cards.css —— 纸牌 3D 结构与材质
+ *
+ * 统一材质参数（与 animator.js / face.js 一致）：
+ *   逻辑尺寸 90×126，位于 1200×700 逻辑桌面。
+ *   纸张厚度 3px（侧边层），圆角 8px，暖白纸色 + 交叉纤维纹。
+ * 结构：
+ *   .card（定位/位移层，preserve-3d）
+ *     └ .card-inner（翻面层 rotateY，preserve-3d）
+ *         ├ .face.front（SVG 印刷面，由 face.js 注入）
+ *         ├ .face.back（SVG 花纹背面）
+ *         └ .edge-r / .edge-b（纸张厚度侧边）
+ * ============================================================ */
+
+:root {
+  /* ---- 材质 tokens：所有环节共用，禁止局部覆盖 ---- */
+  --card-w: 90px;
+  --card-h: 126px;
+  --card-radius: 8px;
+  --card-thick: 3.5px;          /* 模拟纸张厚度（侧面呈多层纸页） */
+  --card-paper: #fdfaf2;        /* 亮暖白纸（画面最亮元素，保持干净） */
+  --card-paper-2: #f4eddb;      /* 纸色暗部 */
+  --card-edge: #ece5d3;         /* 纸侧亮部（页边） */
+  --card-edge-2: #cfc7b1;       /* 纸侧暗部（页缝） */
+  --card-ink: #141318;          /* 黑花色墨色（加深，印刷锐利） */
+  --card-ink-red: #b12833;      /* 红花色墨色（提饱和） */
+  --card-shadow-rest: 0 1px 2px rgba(6, 12, 8, 0.28), 0 3px 7px rgba(6, 12, 8, 0.20);
+  --card-shadow-air: 0 3px 6px rgba(6, 12, 8, 0.28), 0 16px 22px rgba(6, 12, 8, 0.36);
+}
+
+/* ---------- 独立影子层（贴桌面平面，随牌的 z 高度偏移/扩散/变淡；
+   平放时是紧贴的接触阴影，不是浓黑投影） ---------- */
+.card-shadow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--card-w);
+  height: var(--card-h);
+  margin: calc(var(--card-h) / -2) 0 0 calc(var(--card-w) / -2);
+  border-radius: 14px;
+  background: radial-gradient(ellipse 50% 44% at 50% 53%, rgba(3, 9, 5, 0.34) 0%, rgba(3, 9, 5, 0.14) 46%, rgba(3, 9, 5, 0) 72%);
+  transform: translate3d(0, 4px, 0.1px);
+  opacity: 0.55;
+  filter: blur(4px);
+  transition: transform 0.32s cubic-bezier(.3,.6,.3,1), opacity 0.32s ease;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/* ---------- 挑牌模式：牌可悬停，悬停的牌上浮放大（效果在 .card-inner，
+   不触碰外层 pose transform；down/up 两态都保持翻面角） ---------- */
+.card.hoverable { pointer-events: auto; cursor: pointer; }
+.card-inner { transition: transform 0.28s cubic-bezier(.3,.6,.3,1), filter 0.28s ease; }
+.card-inner.peek { transform: translateY(-12px) translateZ(26px) scale(1.07); }
+.card-inner.down.peek { transform: rotateY(180deg) translateY(-12px) translateZ(26px) scale(1.07); }
+.card.peeking { z-index: 30; }
+.card.peeking .face { box-shadow: var(--card-shadow-air); }
+.card.hoverable:not(.peeking) .face.front:hover { filter: brightness(1.06); }
+
+/* ---------- 触屏设备（hover:none）：减轻 52 层模糊的性能开销、去 pointer 光标 ---------- */
+@media (hover: none) {
+  .card-shadow { filter: blur(3px); }
+  .card.hoverable { cursor: default; }
+}
+
+/* ---------- 定位层 ---------- */
+.card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--card-w);
+  height: var(--card-h);
+  margin: calc(var(--card-h) / -2) 0 0 calc(var(--card-w) / -2);
+  transform-style: preserve-3d;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* ---------- 翻面层 ---------- */
+.card-inner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  border-radius: var(--card-radius);
+}
+.card-inner.down { transform: rotateY(180deg); }
+
+/* ---------- 侧面厚度层（绕边旋转 90° 垂直于牌面）：
+   米白纸色 + 细密页缝纹，叠牌时侧面自然呈现多层纸页（实体牌堆的关键信号） ---------- */
+.edge-r, .edge-b {
+  position: absolute;
+  background:
+    repeating-linear-gradient(0deg, var(--card-edge) 0 1.1px, var(--card-edge-2) 1.1px 2.2px);
+}
+.edge-r {
+  top: 1px;
+  bottom: 1px;
+  right: 0;
+  width: var(--card-thick);
+  transform: translateX(100%) rotateY(90deg);
+  transform-origin: left center;
+}
+.edge-b {
+  left: 1px;
+  right: 1px;
+  top: 100%;
+  height: var(--card-thick);
+  transform: rotateX(-90deg);
+  transform-origin: top center;
+}
+
+/* ---------- 正反两面 ---------- */
+.face {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--card-radius);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+  box-shadow: var(--card-shadow-rest);
+}
+
+/* 牌面：亮暖白纸 + 极淡纸纤维 + 亚麻压纹（纹理要"摸得到看不见"） */
+.face.front {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012 0.22' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.40 0 0 0 0 0.32 0 0 0 0.10 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23p)'/%3E%3C/svg%3E") repeat,
+    repeating-linear-gradient(0deg, rgba(122, 104, 72, 0.026) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(122, 104, 72, 0.018) 0 1px, transparent 1px 4px),
+    linear-gradient(165deg, var(--card-paper) 0%, var(--card-paper-2) 100%);
+  border: 1px solid rgba(140, 124, 92, 0.35);
+}
+.face.front > svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* 统一光向：主光自左上，极轻的受光/暗部（重了会让纸发灰发脏） */
+.face.front::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(128deg, rgba(255, 253, 246, 0.10) 0%, rgba(255, 253, 246, 0) 30%),
+    linear-gradient(308deg, rgba(58, 48, 26, 0.05) 0%, rgba(58, 48, 26, 0) 24%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    inset 0 -1px 0 rgba(58, 46, 20, 0.10);
+}
+
+/* 牌背：face.js 注入经典纹样 SVG；深色面上同向受光（高光更锐、暗部更深） */
+.face.back {
+  transform: rotateY(180deg);
+  background: #16283f;
+  border: 1px solid rgba(10, 18, 30, 0.75);
+}
+.face.back > svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.face.back::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(128deg, rgba(255, 250, 230, 0.09) 0%, rgba(255, 250, 230, 0) 28%),
+    linear-gradient(308deg, rgba(2, 6, 14, 0.20) 0%, rgba(2, 6, 14, 0) 30%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -1px 0 rgba(0, 4, 10, 0.28);
+}
+
+/* ---------- 飞行状态：阴影加深（阴影位于牌面平面，随牌运动） ---------- */
+.card.airborne .face { box-shadow: var(--card-shadow-air); }
+
+/* ---------- 感应高亮：极轻提亮（face 上施加 filter，不破坏 preserve-3d） ---------- */
+.card.sensing .face { filter: brightness(1.07); }
+
+/* ---------- 揭晓定格：1px 金细线 + 接触阴影收紧（不做发光） ---------- */
+.card.revealed .face.front {
+  box-shadow:
+    0 0 0 1px rgba(210, 170, 98, 0.75),
+    0 4px 14px rgba(6, 12, 8, 0.45),
+    0 18px 50px rgba(6, 12, 8, 0.42);
+}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#070b08">
+  <title>午夜剧场 · 纸牌魔术秀</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/cards.css">
+</head>
+<body>
+  <!-- 背景氛围粒子（金色微尘） -->
+  <canvas id="fx-bg"></canvas>
+
+  <!-- 聚光灯（光锥 + 桌面光池） -->
+  <div id="spotlight" class="off">
+    <div class="beam"></div>
+    <div class="pool"></div>
+  </div>
+
+  <!-- 3D 舞台：table 是逻辑桌面，整体等比缩放适配屏幕 -->
+  <div id="stage">
+    <div id="table">
+      <div class="table-surface"></div>
+      <div id="reveal-glow"></div>
+      <!-- 牌由 animator.js 动态注入 -->
+      <div id="hotspots"></div>
+    </div>
+  </div>
+
+  <!-- 前景特效（庆祝烟花） -->
+  <canvas id="fx-fg"></canvas>
+
+  <!-- 电影感色彩分级：微暖 + 浅暗角 + 细颗粒 -->
+  <div id="grade"></div>
+
+  <!-- 台词：无底低语（动态播报给读屏器） -->
+  <div id="subtitle" aria-live="polite"><p id="subtitle-text"></p></div>
+
+  <!-- 底部交互（按钮由 show.js 注入） -->
+  <div id="controls"></div>
+
+  <!-- 顶栏：环节名 + 无字图标 -->
+  <div id="topbar">
+    <span id="act-name"></span>
+    <span class="topbar-btns">
+      <button id="btn-sound" title="音效" aria-label="音效开关">♪</button>
+      <button id="btn-speed" title="速度" aria-label="动画速度">»</button>
+      <button id="btn-restart" title="重新开始" aria-label="重新开始">↺</button>
+    </span>
+  </div>
+
+  <!-- 开场遮罩：大留白，一处衬线，一根金线 -->
+  <div id="overlay">
+    <div class="overlay-inner">
+      <div class="overlay-ornament">✦</div>
+      <h1>午夜剧场</h1>
+      <div class="overlay-rule"></div>
+      <button id="btn-start">入&nbsp;场</button>
+    </div>
+  </div>
+
+  <!-- 按依赖顺序加载（普通 script，file:// 双击可玩） -->
+  <script src="js/deck.js"></script>
+  <script src="js/trick27.js"></script>
+  <script src="js/face.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/particles.js"></script>
+  <script src="js/animator.js"></script>
+  <script src="js/show.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
