@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1200px; height: 630px; overflow: hidden; }
+  .scene {
+    position: relative; width: 1200px; height: 630px;
+    background:
+      radial-gradient(ellipse 60% 70% at 42% 40%, rgba(255,232,180,.22) 0%, rgba(255,232,180,0) 60%),
+      radial-gradient(ellipse 100% 100% at 50% 42%, #2f8155 0%, #1c5939 46%, #0e3d26 82%, #0a3320 100%);
+  }
+  .vignette {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 110% 104% at 50% 46%, rgba(0,0,0,0) 52%, rgba(4,7,5,.55) 100%);
+  }
+  /* 三张扇开的牌背 */
+  .card {
+    position: absolute; width: 250px; height: 350px; border-radius: 22px;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22'%3E%3Crect width='22' height='22' fill='%231c3568'/%3E%3Cpath d='M0 11 H22 M11 0 V22' stroke='%23dcd7c6' stroke-width='1.1' opacity='.75'/%3E%3Cpath d='M11 5.8 L12.4 9.2 L15.8 11 L12.4 12.8 L11 16.2 L9.6 12.8 L6.2 11 L9.6 9.2 Z' fill='%23dcd7c6' opacity='.9'/%3E%3C/svg%3E") repeat,
+      #1c3568;
+    border: 3px solid #12244a;
+    box-shadow: 0 30px 60px rgba(2,8,4,.55), inset 0 2px 0 rgba(255,255,255,.12);
+  }
+  .card::before {
+    content: ""; position: absolute; inset: 12px; border-radius: 14px;
+    border: 2px solid rgba(220,215,198,.85);
+  }
+  .card::after {
+    content: "♠"; position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%,-50%); width: 76px; height: 76px; line-height: 72px;
+    text-align: center; font-size: 44px; color: #dcd7c6;
+    background: #1c3568; border: 2px solid rgba(220,215,198,.9); border-radius: 50%;
+  }
+  .c1 { left: 640px; top: 150px; transform: rotate(-14deg); }
+  .c2 { left: 810px; top: 105px; transform: rotate(2deg); z-index: 2; }
+  .c3 { left: 965px; top: 160px; transform: rotate(17deg); }
+  /* 文案区 */
+  .brand { position: absolute; left: 92px; top: 132px; }
+  .orn { color: #8f7540; font-size: 20px; letter-spacing: 12px; margin-bottom: 26px; }
+  h1 {
+    font-family: "Songti SC", "STSong", "SimSun", "KaiTi", serif; font-weight: 400;
+    font-size: 88px; letter-spacing: 18px; color: rgba(237,226,198,.94);
+    text-shadow: 0 4px 26px rgba(0,0,0,.5);
+  }
+  .rule { width: 120px; height: 2px; margin: 44px 0 0;
+    background: linear-gradient(90deg, #d2aa62, rgba(210,170,98,0)); }
+  .sub { margin-top: 40px; font-size: 30px; letter-spacing: 10px; color: rgba(236,226,200,.66); }
+  .foot { position: absolute; left: 92px; bottom: 64px; font-size: 22px;
+    letter-spacing: 6px; color: rgba(236,226,200,.42); }
+</style>
+</head>
+<body>
+  <div class="scene">
+    <div class="card c1"></div>
+    <div class="card c2"></div>
+    <div class="card c3"></div>
+    <div class="brand">
+      <div class="orn">✦</div>
+      <h1>午夜剧场</h1>
+      <div class="rule"></div>
+      <div class="sub">一 场 纸 牌 的 魔 术 秀</div>
+    </div>
+    <div class="foot">它真的能猜中你心里那张牌</div>
+    <div class="vignette"></div>
+  </div>
+</body>
+</html>
