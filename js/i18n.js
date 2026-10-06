@@ -9,8 +9,8 @@
 const i18n = (() => {
   const dict = {
     zh: {
-      title: '午夜剧场 · 纸牌魔术秀',
-      overlayTitle: '午夜剧场',
+      title: '读心术-纸牌魔术',
+      overlayTitle: '读心术',
       enter: '入 场',
       act: { prologue: '序幕', reader: '读心术', curtain: '谢幕' },
       btn: { gather: '收起', gotIt: '记好了', again: '再来一次' },
@@ -40,8 +40,8 @@ const i18n = (() => {
       toast: '语言已切换，演出重新开始。',
     },
     en: {
-      title: 'The Card Room · A Card Magic Show',
-      overlayTitle: 'The Card Room',
+      title: 'Mind Reader - Card Magic',
+      overlayTitle: 'Mind Reader',
       enter: 'ENTER',
       act: { prologue: 'Prologue', reader: 'The Mind Reader', curtain: 'Curtain Call' },
       btn: { gather: 'Gather', gotIt: 'Got it', again: 'Play again' },
