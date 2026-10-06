@@ -320,12 +320,48 @@ html, body {
   cursor: pointer;
   transition: color 0.25s, background 0.25s;
 }
-.topbar-btns button:hover {
+/* 语言钮：文字态（EN / 中） */
+#btn-lang {
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-indent: 1px;
+  font-weight: 500;
+}
+/* GitHub 链接钮：与圆钮同规格 */
+#btn-github {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: var(--whisper);
+  border-radius: 50%;
+  transition: color 0.25s, background 0.25s;
+}
+.topbar-btns button:hover,
+#btn-github:hover {
   color: var(--speak);
   background: rgba(236, 226, 200, 0.06);
 }
 .topbar-btns button:active { transform: scale(0.92); }
-.topbar-btns button:focus-visible { outline: 1px solid var(--gold-line); }
+.topbar-btns button:focus-visible,
+#btn-github:focus-visible { outline: 1px solid var(--gold-line); outline-offset: 2px; }
+
+/* 英文语言下的字形适配：衬线换西文、字距收紧 */
+html[lang="en"] #overlay h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  letter-spacing: 0.32em;
+  text-indent: 0.32em;
+}
+html[lang="en"] #subtitle p {
+  font-family: Georgia, "Times New Roman", serif;
+  letter-spacing: 0.4px;
+}
+html[lang="en"] .btn,
+html[lang="en"] #btn-start {
+  letter-spacing: 3px;
+  text-indent: 3px;
+}
 
 /* ---------- 9. 开场遮罩：大留白，一处衬线 ---------- */
 #overlay {

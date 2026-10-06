@@ -59,12 +59,19 @@
   <!-- 底部交互（按钮由 show.js 注入） -->
   <div id="controls"></div>
 
-  <!-- 顶栏：环节名 + 无字图标 -->
+  <!-- 顶栏：环节名 + 无字图标（语言 / 音效 / 速度 / GitHub / 重开） -->
   <div id="topbar">
     <span id="act-name"></span>
     <span class="topbar-btns">
+      <button id="btn-lang" title="中文 / English" aria-label="切换语言">EN</button>
       <button id="btn-sound" title="音效" aria-label="音效开关">♪</button>
       <button id="btn-speed" title="速度" aria-label="动画速度">»</button>
+      <a id="btn-github" href="https://github.com/1parado/card_magic" target="_blank" rel="noopener"
+         title="GitHub" aria-label="GitHub 项目">
+        <svg viewBox="0 0 16 16" width="17" height="17" aria-hidden="true" fill="currentColor">
+          <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+        </svg>
+      </a>
       <button id="btn-restart" title="重新开始" aria-label="重新开始">↺</button>
     </span>
   </div>
@@ -73,15 +80,16 @@
   <div id="overlay">
     <div class="overlay-inner">
       <div class="overlay-ornament">✦</div>
-      <h1>午夜剧场</h1>
+      <h1 id="overlay-title">午夜剧场</h1>
       <div class="overlay-rule"></div>
-      <button id="btn-start">入&nbsp;场</button>
+      <button id="btn-start">入 场</button>
     </div>
   </div>
 
   <!-- 按依赖顺序加载（普通 script，file:// 双击可玩） -->
   <script src="js/deck.js"></script>
   <script src="js/trick27.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/face.js"></script>
   <script src="js/audio.js"></script>
   <script src="js/particles.js"></script>

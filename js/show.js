@@ -86,32 +86,32 @@ const show = (() => {
 
   /* 序幕：入席、洗牌、切牌、展扇 */
   async function intro(t, ok) {
-    actNameEl.textContent = '序幕';
+    actNameEl.textContent = i18n.t('act.prologue');
     const deck = shuffleInPlace(createDeck());
     animator.initCards(deck);
 
-    await say('请坐近一点。');
+    await say(i18n.t('closer'));
     if (!ok()) return;
     await animator.dealStackIn(deck);
-    await say('一副最普通的牌。');
+    await say(i18n.t('ordinary'));
     if (!ok()) return;
     await animator.riffleShuffle(deck);
-    await say('洗牌，切牌。');
+    await say(i18n.t('shuffle'));
     if (!ok()) return;
     await animator.cutDeckAnim(deck, 16 + ((Math.random() * 14) | 0));
     await animator.fanSpread(deck);
-    await say('五十二张，没有任何秘密。');
+    await say(i18n.t('fan'));
     if (!ok()) return;
-    await waitContinue('收起');
+    await waitContinue(i18n.t('btn.gather'));
     if (!ok()) return;
     await animator.collectFan(deck);
   }
 
   /* 压轴：27 张读心术（三轮发牌、指认、真实收牌重排） */
   async function act27(t, ok) {
-    actNameEl.textContent = '读心术';
+    actNameEl.textContent = i18n.t('act.reader');
     const deck = animator.currentDeck;
-    await say('二十七张牌，足够了。');
+    await say(i18n.t('enough'));
     if (!ok()) return;
 
     const rest = deck.splice(27);
@@ -122,32 +122,26 @@ const show = (() => {
     if (!ok()) return;
 
     let deck27 = deck;
-    const lines = [
-      '你的列，夹进正中间。',
-      '再一次。',
-      '最后一次。',
-    ];
+    const lines = [i18n.t('mid1'), i18n.t('mid2'), i18n.t('mid3')];
     for (let round = 1; round <= 3; round++) {
       await animator.dealColumns(deck27);
       if (round === 1) {
         /* 先给足时间挑牌、记住，确认后才进入指认；
            期间牌可悬停——悬停的牌上浮放大，方便看清 */
-        await say('这二十七张里，挑一张记住。');
+        await say(i18n.t('pick'));
         if (!ok()) return;
         animator.setHoverable(true);
-        await waitContinue('记好了');
+        await waitContinue(i18n.t('btn.gotIt'));
         animator.setHoverable(false);
         if (!ok()) return;
       }
-      await say(round === 1
-        ? '它在哪一列？'
-        : '现在，它在哪一列？');
+      await say(round === 1 ? i18n.t('col1') : i18n.t('colNext'));
       if (!ok()) return;
       const choice = await animator.showHotspots();
       if (!ok()) return;
       await animator.senseColumns();
       if (!ok()) return;
-      await say('……让我感应。');
+      await say(i18n.t('sense'));
       if (!ok()) return;
       await animator.collectColumnsAnim(orderForChoice(choice), choice);
       deck27 = trickRound(deck27, choice);     // 数据同步：与动画完全相同的重排
@@ -157,34 +151,34 @@ const show = (() => {
     }
 
     /* 揭晓仪式：排除物理顶段（数组尾），让位底段（数组头），目标留正中 */
-    await say('接下来，我不需要眼睛。');
+    await say(i18n.t('noEyes'));
     if (!ok()) return;
     await animator.flipAll(deck27, true);
-    await say('心里，默念你的牌。');
+    await say(i18n.t('think'));
     if (!ok()) return;
     await animator.discardCards(deck27.slice(14));
-    await say('不是这张……不是这张……');
+    await say(i18n.t('notThis'));
     if (!ok()) return;
     await animator.sleep(650);                 // 揭晓前的短暂停顿
-    await say('而你心里那张——');
+    await say(i18n.t('andYours'));
     if (!ok()) return;
     await animator.setAside(deck27.slice(0, 13));
-    await say('它自己会走出来。');
+    await say(i18n.t('stepOut'));
     if (!ok()) return;
     await animator.revealCard(deck27[13]);
     if (!ok()) return;
     particles.fireworks();
-    await say('见证奇迹的时刻');
+    await say(i18n.t('miracle'));
     if (!ok()) return;
-    await say(`「${cardName(deck27[13])}」`);
+    await say(`「${i18n.cardName(deck27[13])}」`);
     if (!ok()) return;
-    await say('我没看过任何一张牌面。可它，就在这里。');
+    await say(i18n.t('closing'));
   }
 
   /* 谢幕 */
   async function finale() {
-    actNameEl.textContent = '谢幕';
-    await waitContinue('再来一次');
+    actNameEl.textContent = i18n.t('act.curtain');
+    await waitContinue(i18n.t('btn.again'));
   }
 
   /* ---------- 流程控制 ---------- */

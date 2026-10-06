@@ -9,6 +9,7 @@ const main = (() => {
   const btnStart = document.getElementById('btn-start');
   const btnSound = document.getElementById('btn-sound');
   const btnSpeed = document.getElementById('btn-speed');
+  const btnLang = document.getElementById('btn-lang');
   const btnRestart = document.getElementById('btn-restart');
 
   const SPEEDS = [
@@ -20,13 +21,20 @@ const main = (() => {
 
   function refreshSoundBtn() {
     btnSound.textContent = '♪';
-    btnSound.title = audio.isMuted() ? '音效：关' : '音效：开';
+    btnSound.title = i18n.lang === 'zh' ? (audio.isMuted() ? '音效：关' : '音效：开')
+                                        : (audio.isMuted() ? 'Sound: off' : 'Sound: on');
     btnSound.style.opacity = audio.isMuted() ? '0.3' : '';
   }
 
   function refreshSpeedBtn() {
     animator.setSpeed(SPEEDS[speedIdx].v);
-    btnSpeed.title = `速度：${SPEEDS[speedIdx].label}`;
+    btnSpeed.title = i18n.lang === 'zh' ? `速度：${SPEEDS[speedIdx].label}` : `Speed: ${SPEEDS[speedIdx].label}`;
+  }
+
+  function refreshLangBtn() {
+    // 按钮显示"切换目标"：中文界面显示 EN，英文界面显示 中
+    btnLang.textContent = i18n.lang === 'zh' ? 'EN' : '中';
+    btnLang.title = i18n.lang === 'zh' ? '切换到 English' : '切换到中文';
   }
 
   /* 重新开始：3 秒内二次点击才生效，防止误触打断演出 */
@@ -62,6 +70,15 @@ const main = (() => {
       refreshSoundBtn();
     });
 
+    /* 语言切换：存偏好、刷新静态文案；演出重开以保证全部台词一致 */
+    btnLang.addEventListener('click', () => {
+      i18n.setLang(i18n.lang === 'zh' ? 'en' : 'zh');
+      refreshLangBtn();
+      refreshSoundBtn();
+      refreshSpeedBtn();
+      show.restart();
+    });
+
     btnSpeed.addEventListener('click', () => {
       speedIdx = (speedIdx + 1) % SPEEDS.length;
       refreshSpeedBtn();
@@ -71,6 +88,7 @@ const main = (() => {
   }
 
   function boot() {
+    refreshLangBtn();
     refreshSoundBtn();
     refreshSpeedBtn();
     bind();
